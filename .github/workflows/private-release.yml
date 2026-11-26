@@ -207,7 +207,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - id: v
         name: Resolve version
-        uses: TavruOS/craft-common-actions/actions/resolve-version@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/resolve-version@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           input-version: ${{ inputs.version }}
           app-title: ${{ inputs.app-title }}
@@ -265,18 +265,18 @@ jobs:
         id: app-env
         # <PREFIX>_VERSION, _BUILD_DATE and _BUILD_SHA, with the prefix the app's packaging/env.sh
         # reads, so this workflow lists no apps and a new app needs no change here.
-        uses: TavruOS/craft-common-actions/actions/export-app-build-env@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/export-app-build-env@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           app-name: ${{ inputs.app-name }}
           version: ${{ needs.version.outputs.version }}
           date: ${{ needs.version.outputs.date }}
       - name: Check out craft-fonts
         if: inputs.craft-fonts-ref != ''
-        uses: TavruOS/craft-common-actions/actions/checkout-craft-fonts@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-fonts@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           ref: ${{ inputs.craft-fonts-ref }}
       - name: Check out craft-i18n
-        uses: TavruOS/craft-common-actions/actions/checkout-craft-i18n@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-i18n@44c467af09e58babf7386bef7d8e0d3ec8cba53f
       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # v1
         with:
           toolchain: stable
@@ -389,18 +389,18 @@ jobs:
         id: app-env
         # <PREFIX>_VERSION, _BUILD_DATE and _BUILD_SHA, with the prefix the app's packaging/env.sh
         # reads, so this workflow lists no apps and a new app needs no change here.
-        uses: TavruOS/craft-common-actions/actions/export-app-build-env@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/export-app-build-env@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           app-name: ${{ inputs.app-name }}
           version: ${{ needs.version.outputs.version }}
           date: ${{ needs.version.outputs.date }}
       - name: Check out craft-fonts
         if: inputs.craft-fonts-ref != ''
-        uses: TavruOS/craft-common-actions/actions/checkout-craft-fonts@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-fonts@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           ref: ${{ inputs.craft-fonts-ref }}
       - name: Check out craft-i18n
-        uses: TavruOS/craft-common-actions/actions/checkout-craft-i18n@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-i18n@44c467af09e58babf7386bef7d8e0d3ec8cba53f
       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # v1
         with:
           toolchain: stable
@@ -410,7 +410,7 @@ jobs:
         shell: bash
         run: cargo xtask version set "$VERSION"
       - name: Install WiX
-        uses: TavruOS/craft-common-actions/actions/install-wix@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/install-wix@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           wix-version: ${{ inputs.wix-version }}
       - name: Build, sign, package
@@ -472,19 +472,19 @@ jobs:
         id: app-env
         # <PREFIX>_VERSION, _BUILD_DATE and _BUILD_SHA, with the prefix the app's packaging/env.sh
         # reads, so this workflow lists no apps and a new app needs no change here.
-        uses: TavruOS/craft-common-actions/actions/export-app-build-env@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/export-app-build-env@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           app-name: ${{ inputs.app-name }}
           version: ${{ needs.version.outputs.version }}
           date: ${{ needs.version.outputs.date }}
       - name: Check out craft-fonts
         if: inputs.craft-fonts-ref != ''
-        uses: TavruOS/craft-common-actions/actions/checkout-craft-fonts@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-fonts@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           ref: ${{ inputs.craft-fonts-ref }}
       - name: Check out craft-i18n
-        uses: TavruOS/craft-common-actions/actions/checkout-craft-i18n@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
-      - uses: TavruOS/craft-common-actions/actions/install-linux-deps@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-i18n@44c467af09e58babf7386bef7d8e0d3ec8cba53f
+      - uses: TavruOS/craft-common-actions/actions/install-linux-deps@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           deb-arch: ${{ matrix.deb }}
           nfpm-version: ${{ inputs.nfpm-version }}
@@ -502,12 +502,12 @@ jobs:
       - name: Import the Linux signing key
         if: github.ref == 'refs/heads/release'
         id: linux_signing
-        uses: TavruOS/craft-common-actions/actions/import-signing-key@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/import-signing-key@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           key: ${{ secrets.LINUX_SIGNING_KEY }}
       - name: Sign the RPM packages
         if: steps.linux_signing.outputs.enabled == 'true'
-        uses: TavruOS/craft-common-actions/actions/sign-rpms@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/sign-rpms@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           path: dist/release
       - name: Check the packages
@@ -556,7 +556,7 @@ jobs:
         id: app-env
         # <PREFIX>_VERSION, _BUILD_DATE and _BUILD_SHA, with the prefix the app's packaging/env.sh
         # reads, so this workflow lists no apps and a new app needs no change here.
-        uses: TavruOS/craft-common-actions/actions/export-app-build-env@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/export-app-build-env@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           app-name: ${{ inputs.app-name }}
           version: ${{ needs.version.outputs.version }}
@@ -575,7 +575,7 @@ jobs:
       - name: Import the Linux signing key
         if: github.ref == 'refs/heads/release'
         # flatpak-bundle.sh signs the commit and embeds the public key when SIGNING_FPR is set.
-        uses: TavruOS/craft-common-actions/actions/import-signing-key@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/import-signing-key@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           key: ${{ secrets.LINUX_SIGNING_KEY }}
       - name: Build the Flatpak bundle
@@ -678,7 +678,7 @@ jobs:
           fi
           tarball="${tarballs[0]}"
           echo "path=$tarball" >>"$GITHUB_OUTPUT"
-      - uses: TavruOS/craft-common-actions/actions/arch-package@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+      - uses: TavruOS/craft-common-actions/actions/arch-package@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           tarball: ${{ steps.tarball.outputs.path }}
           arch: ${{ matrix.arch }}
@@ -741,18 +741,18 @@ jobs:
         id: app-env
         # <PREFIX>_VERSION, _BUILD_DATE and _BUILD_SHA, with the prefix the app's packaging/env.sh
         # reads, so this workflow lists no apps and a new app needs no change here.
-        uses: TavruOS/craft-common-actions/actions/export-app-build-env@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/export-app-build-env@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           app-name: ${{ inputs.app-name }}
           version: ${{ needs.version.outputs.version }}
           date: ${{ needs.version.outputs.date }}
       - name: Check out craft-fonts
         if: inputs.craft-fonts-ref != ''
-        uses: TavruOS/craft-common-actions/actions/checkout-craft-fonts@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-fonts@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           ref: ${{ inputs.craft-fonts-ref }}
       - name: Check out craft-i18n
-        uses: TavruOS/craft-common-actions/actions/checkout-craft-i18n@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-i18n@44c467af09e58babf7386bef7d8e0d3ec8cba53f
       - name: Start the FreeBSD VM
         uses: vmactions/freebsd-vm@c46abacb49f09938ca4e1702d15d836285d694cc # v1.5.9
         with:
@@ -942,7 +942,7 @@ jobs:
         id: app-env
         # <PREFIX>_VERSION, _BUILD_DATE and _BUILD_SHA, with the prefix the app's packaging/env.sh
         # reads, so this workflow lists no apps and a new app needs no change here.
-        uses: TavruOS/craft-common-actions/actions/export-app-build-env@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/export-app-build-env@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           app-name: ${{ inputs.app-name }}
           version: ${{ needs.version.outputs.version }}
@@ -951,16 +951,16 @@ jobs:
         with:
           toolchain: stable
           targets: wasm32-unknown-unknown
-      - uses: TavruOS/craft-common-actions/actions/install-trunk@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+      - uses: TavruOS/craft-common-actions/actions/install-trunk@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           trunk-version: ${{ inputs.trunk-version }}
       - name: Check out craft-fonts
         if: inputs.web-craft-fonts && inputs.craft-fonts-ref != ''
-        uses: TavruOS/craft-common-actions/actions/checkout-craft-fonts@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-fonts@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           ref: ${{ inputs.craft-fonts-ref }}
       - name: Check out craft-i18n
-        uses: TavruOS/craft-common-actions/actions/checkout-craft-i18n@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-i18n@44c467af09e58babf7386bef7d8e0d3ec8cba53f
       - name: Apply version override
         if: inputs.version != ''
         run: cargo xtask version set "$VERSION"
@@ -1016,18 +1016,18 @@ jobs:
         id: app-env
         # <PREFIX>_VERSION, _BUILD_DATE and _BUILD_SHA, with the prefix the app's packaging/env.sh
         # reads, so this workflow lists no apps and a new app needs no change here.
-        uses: TavruOS/craft-common-actions/actions/export-app-build-env@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/export-app-build-env@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           app-name: ${{ inputs.app-name }}
           version: ${{ needs.version.outputs.version }}
           date: ${{ needs.version.outputs.date }}
       - name: Check out craft-fonts
         if: inputs.craft-fonts-ref != ''
-        uses: TavruOS/craft-common-actions/actions/checkout-craft-fonts@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-fonts@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           ref: ${{ inputs.craft-fonts-ref }}
       - name: Check out craft-i18n
-        uses: TavruOS/craft-common-actions/actions/checkout-craft-i18n@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-i18n@44c467af09e58babf7386bef7d8e0d3ec8cba53f
       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # v1
         with:
           toolchain: stable
@@ -1035,9 +1035,9 @@ jobs:
       - name: Apply version override
         if: inputs.version != ''
         run: cargo xtask version set "$VERSION"
-      - uses: TavruOS/craft-common-actions/actions/install-riscv64-cross@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+      - uses: TavruOS/craft-common-actions/actions/install-riscv64-cross@44c467af09e58babf7386bef7d8e0d3ec8cba53f
       - name: Install nfpm (SHA256-verified)
-        uses: TavruOS/craft-common-actions/actions/install-nfpm@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/install-nfpm@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           nfpm-version: ${{ inputs.nfpm-version }}
           deb-arch: amd64
@@ -1058,12 +1058,12 @@ jobs:
       - name: Import the Linux signing key
         if: github.ref == 'refs/heads/release'
         id: linux_signing
-        uses: TavruOS/craft-common-actions/actions/import-signing-key@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/import-signing-key@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           key: ${{ secrets.LINUX_SIGNING_KEY }}
       - name: Sign the RPM packages
         if: steps.linux_signing.outputs.enabled == 'true'
-        uses: TavruOS/craft-common-actions/actions/sign-rpms@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/sign-rpms@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           path: dist/release
       - name: Check the packages
@@ -1112,13 +1112,13 @@ jobs:
         id: app-env
         # <PREFIX>_VERSION, _BUILD_DATE and _BUILD_SHA, with the prefix the app's packaging/env.sh
         # reads, so this workflow lists no apps and a new app needs no change here.
-        uses: TavruOS/craft-common-actions/actions/export-app-build-env@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/export-app-build-env@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           app-name: ${{ inputs.app-name }}
           version: ${{ needs.version.outputs.version }}
           date: ${{ needs.version.outputs.date }}
       - name: Check out craft-i18n
-        uses: TavruOS/craft-common-actions/actions/checkout-craft-i18n@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-i18n@44c467af09e58babf7386bef7d8e0d3ec8cba53f
       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # v1
         with:
           toolchain: stable
@@ -1149,7 +1149,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: TavruOS/craft-common-actions/actions/draft-release@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+      - uses: TavruOS/craft-common-actions/actions/draft-release@44c467af09e58babf7386bef7d8e0d3ec8cba53f
         with:
           version: ${{ needs.version.outputs.version }}
           app-title: ${{ inputs.app-title }}
