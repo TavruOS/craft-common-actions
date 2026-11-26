@@ -1,5 +1,5 @@
 name: "Check out craft-i18n"
-description: "Checks out storytold/craft-i18n at the caller's craft-i18n.rev, if it has one, and sets CRAFT_I18N_DIR and CRAFT_I18N_REQUIRED=1 for the rest of the job"
+description: "Checks out TavruOS/craft-i18n at the caller's craft-i18n.rev, if it has one, and sets CRAFT_I18N_DIR and CRAFT_I18N_REQUIRED=1 for the rest of the job"
 
 inputs:
   path:
@@ -32,7 +32,7 @@ runs:
       if: steps.pin.outputs.rev != ''
       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
-        repository: storytold/craft-i18n
+        repository: TavruOS/craft-i18n
         ref: ${{ steps.pin.outputs.rev }}
         path: ${{ inputs.path }}
         persist-credentials: false
