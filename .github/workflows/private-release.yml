@@ -5,7 +5,7 @@ on:
   workflow_call:
     inputs:
       allowed-git-packages:
-        description: JSON pairs of package name and exact locked Git source allowed alongside storytold
+        description: JSON pairs of package name and exact locked Git source allowed alongside storytold and TavruOS
         type: string
         default: '[]'
       validate-only:
@@ -22,7 +22,7 @@ on:
         required: true
       craft-fonts-ref:
         # The suite's craft-fonts pin. Bump it here, in freebsd.yml and in gate.yml together.
-        description: "Git ref for storytold/craft-fonts embedded font assets. Defaults to the suite's pin; override it only for an app that needs another commit. Desktop builds run with CRAFT_FONTS_DIR and CRAFT_FONTS_REQUIRED=1 either way"
+        description: "Git ref for TavruOS/craft-fonts embedded font assets. Defaults to the suite's pin; override it only for an app that needs another commit. Desktop builds run with CRAFT_FONTS_DIR and CRAFT_FONTS_REQUIRED=1 either way"
         type: string
         required: false
         default: "bfcbf714e45a3ea8e98f88ab2b7971372a576414"
@@ -142,12 +142,12 @@ permissions:
   contents: read
 
 jobs:
-  # Fails fast before any build: git dependencies must come from github.com/storytold, and the
+  # Fails fast before any build: git dependencies must come from github.com/storytold or github.com/TavruOS, and the
   # lock file must not declare source replacement, patches or path overrides that could silently
   # swap one. Lives here (not in each app's release.yml) so every craftapp gets the gate at @main.
   # Every build job needs `version`, so these builds are gated transitively.
   git-sources:
-    name: Git dependencies come from storytold
+    name: Git dependencies come from storytold or TavruOS
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -156,7 +156,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/fetch-eridu-style
+      - uses: ./.github/actions/fetch-tavru-style
         with:
           ssh-key: ${{ secrets.ERIDU_STYLE_DEPLOY_KEY }}
       - name: Git dependencies use approved sources
@@ -186,7 +186,7 @@ jobs:
               packages = tomllib.load(source).get('package', [])
           bad = sorted({p['source'] for p in packages
                         if p.get('source', '').startswith('git+')
-                        and not p['source'].startswith('git+https://github.com/storytold/')
+                        and not p['source'].startswith(('git+https://github.com/storytold/', 'git+https://github.com/TavruOS/'))
                         and [p['name'], p['source']] not in allowed})
           if bad:
               raise SystemExit('Git dependencies outside approved sources: ' + ', '.join(bad))
@@ -207,7 +207,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - id: v
         name: Resolve version
-        uses: storytold/craft-common-actions/actions/resolve-version@main
+        uses: TavruOS/craft-common-actions/actions/resolve-version@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           input-version: ${{ inputs.version }}
           app-title: ${{ inputs.app-title }}
@@ -252,7 +252,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/fetch-eridu-style
+      - uses: ./.github/actions/fetch-tavru-style
         with:
           ssh-key: ${{ secrets.ERIDU_STYLE_DEPLOY_KEY }}
       - name: Load refreshed contributor credits
@@ -265,18 +265,18 @@ jobs:
         id: app-env
         # <PREFIX>_VERSION, _BUILD_DATE and _BUILD_SHA, with the prefix the app's packaging/env.sh
         # reads, so this workflow lists no apps and a new app needs no change here.
-        uses: storytold/craft-common-actions/actions/export-app-build-env@main
+        uses: TavruOS/craft-common-actions/actions/export-app-build-env@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           app-name: ${{ inputs.app-name }}
           version: ${{ needs.version.outputs.version }}
           date: ${{ needs.version.outputs.date }}
       - name: Check out craft-fonts
         if: inputs.craft-fonts-ref != ''
-        uses: storytold/craft-common-actions/actions/checkout-craft-fonts@main
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-fonts@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           ref: ${{ inputs.craft-fonts-ref }}
       - name: Check out craft-i18n
-        uses: storytold/craft-common-actions/actions/checkout-craft-i18n@main
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-i18n@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # v1
         with:
           toolchain: stable
@@ -376,7 +376,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/fetch-eridu-style
+      - uses: ./.github/actions/fetch-tavru-style
         with:
           ssh-key: ${{ secrets.ERIDU_STYLE_DEPLOY_KEY }}
       - name: Load refreshed contributor credits
@@ -389,18 +389,18 @@ jobs:
         id: app-env
         # <PREFIX>_VERSION, _BUILD_DATE and _BUILD_SHA, with the prefix the app's packaging/env.sh
         # reads, so this workflow lists no apps and a new app needs no change here.
-        uses: storytold/craft-common-actions/actions/export-app-build-env@main
+        uses: TavruOS/craft-common-actions/actions/export-app-build-env@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           app-name: ${{ inputs.app-name }}
           version: ${{ needs.version.outputs.version }}
           date: ${{ needs.version.outputs.date }}
       - name: Check out craft-fonts
         if: inputs.craft-fonts-ref != ''
-        uses: storytold/craft-common-actions/actions/checkout-craft-fonts@main
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-fonts@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           ref: ${{ inputs.craft-fonts-ref }}
       - name: Check out craft-i18n
-        uses: storytold/craft-common-actions/actions/checkout-craft-i18n@main
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-i18n@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # v1
         with:
           toolchain: stable
@@ -410,7 +410,7 @@ jobs:
         shell: bash
         run: cargo xtask version set "$VERSION"
       - name: Install WiX
-        uses: storytold/craft-common-actions/actions/install-wix@main
+        uses: TavruOS/craft-common-actions/actions/install-wix@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           wix-version: ${{ inputs.wix-version }}
       - name: Build, sign, package
@@ -459,7 +459,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/fetch-eridu-style
+      - uses: ./.github/actions/fetch-tavru-style
         with:
           ssh-key: ${{ secrets.ERIDU_STYLE_DEPLOY_KEY }}
       - name: Load refreshed contributor credits
@@ -472,19 +472,19 @@ jobs:
         id: app-env
         # <PREFIX>_VERSION, _BUILD_DATE and _BUILD_SHA, with the prefix the app's packaging/env.sh
         # reads, so this workflow lists no apps and a new app needs no change here.
-        uses: storytold/craft-common-actions/actions/export-app-build-env@main
+        uses: TavruOS/craft-common-actions/actions/export-app-build-env@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           app-name: ${{ inputs.app-name }}
           version: ${{ needs.version.outputs.version }}
           date: ${{ needs.version.outputs.date }}
       - name: Check out craft-fonts
         if: inputs.craft-fonts-ref != ''
-        uses: storytold/craft-common-actions/actions/checkout-craft-fonts@main
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-fonts@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           ref: ${{ inputs.craft-fonts-ref }}
       - name: Check out craft-i18n
-        uses: storytold/craft-common-actions/actions/checkout-craft-i18n@main
-      - uses: storytold/craft-common-actions/actions/install-linux-deps@main
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-i18n@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
+      - uses: TavruOS/craft-common-actions/actions/install-linux-deps@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           deb-arch: ${{ matrix.deb }}
           nfpm-version: ${{ inputs.nfpm-version }}
@@ -502,12 +502,12 @@ jobs:
       - name: Import the Linux signing key
         if: github.ref == 'refs/heads/release'
         id: linux_signing
-        uses: storytold/craft-common-actions/actions/import-signing-key@main
+        uses: TavruOS/craft-common-actions/actions/import-signing-key@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           key: ${{ secrets.LINUX_SIGNING_KEY }}
       - name: Sign the RPM packages
         if: steps.linux_signing.outputs.enabled == 'true'
-        uses: storytold/craft-common-actions/actions/sign-rpms@main
+        uses: TavruOS/craft-common-actions/actions/sign-rpms@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           path: dist/release
       - name: Check the packages
@@ -556,7 +556,7 @@ jobs:
         id: app-env
         # <PREFIX>_VERSION, _BUILD_DATE and _BUILD_SHA, with the prefix the app's packaging/env.sh
         # reads, so this workflow lists no apps and a new app needs no change here.
-        uses: storytold/craft-common-actions/actions/export-app-build-env@main
+        uses: TavruOS/craft-common-actions/actions/export-app-build-env@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           app-name: ${{ inputs.app-name }}
           version: ${{ needs.version.outputs.version }}
@@ -575,7 +575,7 @@ jobs:
       - name: Import the Linux signing key
         if: github.ref == 'refs/heads/release'
         # flatpak-bundle.sh signs the commit and embeds the public key when SIGNING_FPR is set.
-        uses: storytold/craft-common-actions/actions/import-signing-key@main
+        uses: TavruOS/craft-common-actions/actions/import-signing-key@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           key: ${{ secrets.LINUX_SIGNING_KEY }}
       - name: Build the Flatpak bundle
@@ -610,7 +610,7 @@ jobs:
         run: |
           if [ -x packaging/linux/flatpak-oci.sh ]; then
             REGISTRY="${REGISTRY,,}"
-            creds="${GITHUB_ACTOR:-storytold}:$GITHUB_TOKEN"
+            creds="${GITHUB_ACTOR:-TavruOS}:$GITHUB_TOKEN"
             # The app's script only builds the layout; the tags are pushed here. Older copies of
             # flatpak-oci.sh move stable-<arch> on every --push, so a prerelease or a test run
             # from any branch would become what stable-<arch> clients install.
@@ -678,7 +678,7 @@ jobs:
           fi
           tarball="${tarballs[0]}"
           echo "path=$tarball" >>"$GITHUB_OUTPUT"
-      - uses: storytold/craft-common-actions/actions/arch-package@main
+      - uses: TavruOS/craft-common-actions/actions/arch-package@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           tarball: ${{ steps.tarball.outputs.path }}
           arch: ${{ matrix.arch }}
@@ -728,7 +728,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/fetch-eridu-style
+      - uses: ./.github/actions/fetch-tavru-style
         with:
           ssh-key: ${{ secrets.ERIDU_STYLE_DEPLOY_KEY }}
       - name: Load refreshed contributor credits
@@ -741,18 +741,18 @@ jobs:
         id: app-env
         # <PREFIX>_VERSION, _BUILD_DATE and _BUILD_SHA, with the prefix the app's packaging/env.sh
         # reads, so this workflow lists no apps and a new app needs no change here.
-        uses: storytold/craft-common-actions/actions/export-app-build-env@main
+        uses: TavruOS/craft-common-actions/actions/export-app-build-env@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           app-name: ${{ inputs.app-name }}
           version: ${{ needs.version.outputs.version }}
           date: ${{ needs.version.outputs.date }}
       - name: Check out craft-fonts
         if: inputs.craft-fonts-ref != ''
-        uses: storytold/craft-common-actions/actions/checkout-craft-fonts@main
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-fonts@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           ref: ${{ inputs.craft-fonts-ref }}
       - name: Check out craft-i18n
-        uses: storytold/craft-common-actions/actions/checkout-craft-i18n@main
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-i18n@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
       - name: Start the FreeBSD VM
         uses: vmactions/freebsd-vm@c46abacb49f09938ca4e1702d15d836285d694cc # v1.5.9
         with:
@@ -845,10 +845,10 @@ jobs:
           # Only rustup writes this; the lang/rust package installs into /usr/local/bin.
           [ ! -f "$HOME/.cargo/env" ] || . "$HOME/.cargo/env"
           export CARGO_NET_GIT_FETCH_WITH_CLI=true GIT_CONFIG_COUNT=2
-          export GIT_CONFIG_KEY_0="url.file://$PWD/.git/ci-eridu-style.insteadOf"
+          export GIT_CONFIG_KEY_0="url.file://$PWD/.git/ci-tavru-style.insteadOf"
           export GIT_CONFIG_KEY_1="$GIT_CONFIG_KEY_0"
-          export GIT_CONFIG_VALUE_0=https://github.com/tomblanchard312/eridu-style.git
-          export GIT_CONFIG_VALUE_1=https://github.com/tomblanchard312/eridu-style
+          export GIT_CONFIG_VALUE_0=https://github.com/TavruOS/tavru-style.git
+          export GIT_CONFIG_VALUE_1=https://github.com/TavruOS/tavru-style
           git config --global --add safe.directory "*"
           # Before the cross environment: xtask has to run on the guest.
           if [ -n "$INPUT_VERSION" ]; then cargo xtask version set "$VERSION" || cargo run -q -p xtask -- version set "$VERSION"; fi
@@ -929,7 +929,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/fetch-eridu-style
+      - uses: ./.github/actions/fetch-tavru-style
         with:
           ssh-key: ${{ secrets.ERIDU_STYLE_DEPLOY_KEY }}
       - name: Load refreshed contributor credits
@@ -942,7 +942,7 @@ jobs:
         id: app-env
         # <PREFIX>_VERSION, _BUILD_DATE and _BUILD_SHA, with the prefix the app's packaging/env.sh
         # reads, so this workflow lists no apps and a new app needs no change here.
-        uses: storytold/craft-common-actions/actions/export-app-build-env@main
+        uses: TavruOS/craft-common-actions/actions/export-app-build-env@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           app-name: ${{ inputs.app-name }}
           version: ${{ needs.version.outputs.version }}
@@ -951,16 +951,16 @@ jobs:
         with:
           toolchain: stable
           targets: wasm32-unknown-unknown
-      - uses: storytold/craft-common-actions/actions/install-trunk@main
+      - uses: TavruOS/craft-common-actions/actions/install-trunk@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           trunk-version: ${{ inputs.trunk-version }}
       - name: Check out craft-fonts
         if: inputs.web-craft-fonts && inputs.craft-fonts-ref != ''
-        uses: storytold/craft-common-actions/actions/checkout-craft-fonts@main
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-fonts@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           ref: ${{ inputs.craft-fonts-ref }}
       - name: Check out craft-i18n
-        uses: storytold/craft-common-actions/actions/checkout-craft-i18n@main
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-i18n@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
       - name: Apply version override
         if: inputs.version != ''
         run: cargo xtask version set "$VERSION"
@@ -1003,7 +1003,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/fetch-eridu-style
+      - uses: ./.github/actions/fetch-tavru-style
         with:
           ssh-key: ${{ secrets.ERIDU_STYLE_DEPLOY_KEY }}
       - name: Load refreshed contributor credits
@@ -1016,18 +1016,18 @@ jobs:
         id: app-env
         # <PREFIX>_VERSION, _BUILD_DATE and _BUILD_SHA, with the prefix the app's packaging/env.sh
         # reads, so this workflow lists no apps and a new app needs no change here.
-        uses: storytold/craft-common-actions/actions/export-app-build-env@main
+        uses: TavruOS/craft-common-actions/actions/export-app-build-env@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           app-name: ${{ inputs.app-name }}
           version: ${{ needs.version.outputs.version }}
           date: ${{ needs.version.outputs.date }}
       - name: Check out craft-fonts
         if: inputs.craft-fonts-ref != ''
-        uses: storytold/craft-common-actions/actions/checkout-craft-fonts@main
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-fonts@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           ref: ${{ inputs.craft-fonts-ref }}
       - name: Check out craft-i18n
-        uses: storytold/craft-common-actions/actions/checkout-craft-i18n@main
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-i18n@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # v1
         with:
           toolchain: stable
@@ -1035,9 +1035,9 @@ jobs:
       - name: Apply version override
         if: inputs.version != ''
         run: cargo xtask version set "$VERSION"
-      - uses: storytold/craft-common-actions/actions/install-riscv64-cross@main
+      - uses: TavruOS/craft-common-actions/actions/install-riscv64-cross@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
       - name: Install nfpm (SHA256-verified)
-        uses: storytold/craft-common-actions/actions/install-nfpm@main
+        uses: TavruOS/craft-common-actions/actions/install-nfpm@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           nfpm-version: ${{ inputs.nfpm-version }}
           deb-arch: amd64
@@ -1058,12 +1058,12 @@ jobs:
       - name: Import the Linux signing key
         if: github.ref == 'refs/heads/release'
         id: linux_signing
-        uses: storytold/craft-common-actions/actions/import-signing-key@main
+        uses: TavruOS/craft-common-actions/actions/import-signing-key@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           key: ${{ secrets.LINUX_SIGNING_KEY }}
       - name: Sign the RPM packages
         if: steps.linux_signing.outputs.enabled == 'true'
-        uses: storytold/craft-common-actions/actions/sign-rpms@main
+        uses: TavruOS/craft-common-actions/actions/sign-rpms@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           path: dist/release
       - name: Check the packages
@@ -1099,7 +1099,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/fetch-eridu-style
+      - uses: ./.github/actions/fetch-tavru-style
         with:
           ssh-key: ${{ secrets.ERIDU_STYLE_DEPLOY_KEY }}
       - name: Load refreshed contributor credits
@@ -1112,13 +1112,13 @@ jobs:
         id: app-env
         # <PREFIX>_VERSION, _BUILD_DATE and _BUILD_SHA, with the prefix the app's packaging/env.sh
         # reads, so this workflow lists no apps and a new app needs no change here.
-        uses: storytold/craft-common-actions/actions/export-app-build-env@main
+        uses: TavruOS/craft-common-actions/actions/export-app-build-env@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           app-name: ${{ inputs.app-name }}
           version: ${{ needs.version.outputs.version }}
           date: ${{ needs.version.outputs.date }}
       - name: Check out craft-i18n
-        uses: storytold/craft-common-actions/actions/checkout-craft-i18n@main
+        uses: TavruOS/craft-common-actions/actions/checkout-craft-i18n@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # v1
         with:
           toolchain: stable
@@ -1149,7 +1149,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: storytold/craft-common-actions/actions/draft-release@main
+      - uses: TavruOS/craft-common-actions/actions/draft-release@4a9eaa63350011df68e50cf3cb4e789336f5dd5c
         with:
           version: ${{ needs.version.outputs.version }}
           app-title: ${{ inputs.app-title }}
@@ -1170,7 +1170,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/fetch-eridu-style
+      - uses: ./.github/actions/fetch-tavru-style
         with:
           ssh-key: ${{ secrets.ERIDU_STYLE_DEPLOY_KEY }}
       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8
@@ -1191,7 +1191,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/fetch-eridu-style
+      - uses: ./.github/actions/fetch-tavru-style
         with:
           ssh-key: ${{ secrets.ERIDU_STYLE_DEPLOY_KEY }}
       - uses: vmactions/freebsd-vm@c46abacb49f09938ca4e1702d15d836285d694cc
@@ -1204,10 +1204,10 @@ jobs:
           run: |
             set -eu
             export CARGO_NET_GIT_FETCH_WITH_CLI=true GIT_CONFIG_COUNT=2
-            export GIT_CONFIG_KEY_0="url.file://$PWD/.git/ci-eridu-style.insteadOf"
+            export GIT_CONFIG_KEY_0="url.file://$PWD/.git/ci-tavru-style.insteadOf"
             export GIT_CONFIG_KEY_1="$GIT_CONFIG_KEY_0"
-            export GIT_CONFIG_VALUE_0=https://github.com/tomblanchard312/eridu-style.git
-            export GIT_CONFIG_VALUE_1=https://github.com/tomblanchard312/eridu-style
+            export GIT_CONFIG_VALUE_0=https://github.com/TavruOS/tavru-style.git
+            export GIT_CONFIG_VALUE_1=https://github.com/TavruOS/tavru-style
             cp Cargo.lock /tmp/release-Cargo.lock
             cargo metadata --locked --format-version 1 > /tmp/release-metadata.json
             cmp Cargo.lock /tmp/release-Cargo.lock
